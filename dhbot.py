@@ -111,6 +111,7 @@ async def on_message(message):
 			embed.add_field(name="Url " + str(i), value="https://" + match)
 			i += 1
 
+		embed.set_footer(text="Removed the country specific & tracking part from the URL")
 		await message.channel.send(embed=embed)
 
 @client.event
