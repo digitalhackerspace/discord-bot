@@ -103,7 +103,7 @@ async def on_message(message):
 		return
 
 	matches = re.findall(ALIEXPRESS_LINK_REGEX, message.content)
-	if matches is not None:
+	if len(matches) > 0:
 		embed = discord.Embed(title="Found unclean AliExpress URLs", color=discord.Color.from_rgb(255,0,0))
 		
 		i = 0
