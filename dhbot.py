@@ -1,5 +1,6 @@
 import discord
 from discord.utils import get
+import re
 
 AUTO_ROLE_ID = 565793207338926080
 AUTO_ROLE_REASON = 'Join Auto Role'
@@ -28,6 +29,8 @@ ROLES_TO_ASSIGN = {
 	"🎙️": 706530739474268170
 }
 ROLE_ASSIGN_REASON = 'User opted-in to role'
+
+ALIEXPRESS_LINK_REGEX = r"\.(aliexpress\.com\/item\/.*\.html)"
 
 client = discord.Client()
 
@@ -93,6 +96,22 @@ async def on_member_join(member):
 			break
 
 	invites = current_invites
+
+@client.event
+async def on_message(message):
+	if message.author == client.user:
+		return
+
+	matches = re.findall(ALIEXPRESS_LINK_REGEX, message.content)
+	if matches is not None:
+		embed = discord.Embed(title="Found unclean AliExpress URLs", color=discord.Color.from_rgb(255,0,0))
+		
+		i = 0
+		for match in matches:
+			embed.add_field(name="Url " + str(i), value="https://" + match)
+			i += 1
+
+		await message.channel.send(embed=embed)
 
 @client.event
 async def on_raw_reaction_add(payload):
