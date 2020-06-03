@@ -1,5 +1,6 @@
 import discord
 from discord.utils import get
+import os
 import re
 
 AUTO_ROLE_ID = 565793207338926080
@@ -156,4 +157,4 @@ async def on_raw_reaction_remove(payload):
 				print("Error while assigning role by reaction; user is None")
 
 print("Starting bot...")
-client.run('NTY1ODU1MDU1NTUxNTI4OTYw.XK9yGA.ftMNwNZMyWoFxIcFcT8vUWQzhl8')
+client.run(os.environ['DISCORD_TOKEN'])
