@@ -1,0 +1,15 @@
+[Unit]
+Description=DHBot
+
+[Service]
+User=dhbot
+Group=dhbot
+ExecStart=/usr/bin/python3 /var/dhbot/dhbot.py
+Type=idle
+WorkingDirectory=/var/dhbot/
+Restart=on-failure
+RestartSec=5s
+Environment="DISCORD_TOKEN=MY_SECRET_TOKEN"
+
+[Install]
+WantedBy=multi-user.target
