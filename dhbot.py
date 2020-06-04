@@ -31,7 +31,7 @@ ROLES_TO_ASSIGN = {
 }
 ROLE_ASSIGN_REASON = 'User opted-in to role'
 
-ALIEXPRESS_LINK_REGEX = r" *(?P<protocol>https?:\/\/)?(?P<subdomains>\S*?\.?)(?P<aliLink>aliexpress\.com\/item\/\d*\.html)(?P<queryParameter>\?\S*)?\s+"
+ALIEXPRESS_LINK_REGEX = r" *(?P<protocol>https?:\/\/)?(?P<subdomains>\S*?\.?)(?P<aliLink>aliexpress\.com\/item\/\d*\.html)(?P<queryParameter>\?\S*)?\s*"
 
 client = discord.Client()
 
