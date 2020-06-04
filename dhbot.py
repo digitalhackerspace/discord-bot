@@ -31,7 +31,7 @@ ROLES_TO_ASSIGN = {
 }
 ROLE_ASSIGN_REASON = 'User opted-in to role'
 
-ALIEXPRESS_LINK_REGEX = r"[^w{3}]\.(aliexpress\.com\/item\/.*\.html)"
+ALIEXPRESS_LINK_REGEX = r" *(?P<protocol>https?:\/\/)?(?P<subdomains>\S*?\.?)(?P<aliLink>aliexpress\.com\/item\/\d*\.html)(?P<queryParameter>\?\S*)?\s+"
 
 client = discord.Client()
 
@@ -103,13 +103,15 @@ async def on_message(message):
 	if message.author == client.user:
 		return
 
-	matches = re.findall(ALIEXPRESS_LINK_REGEX, message.content)
+	matches = [m.groupdict() for m in re.finditer(ALIEXPRESS_LINK_REGEX, message.content)]
+	matches = [x for x in matches if (x['subdomains'] != "www." and x['subdomains'] != "") or x['queryParameter'] != None]
+
 	if len(matches) > 0:
 		embed = discord.Embed(title="Found unclean AliExpress URLs", color=discord.Color.from_rgb(255,0,0))
 		
 		i = 0
 		for match in matches:
-			embed.add_field(name="Url " + str(i), value="https://" + match)
+			embed.add_field(name="Url " + str(i), value="https://" + match["aliLink"])
 			i += 1
 
 		embed.set_footer(text="Removed the country specific & tracking part from the URL")
