@@ -1,3 +1,4 @@
+import os
 import discord
 from discord.utils import get
 
@@ -32,4 +33,4 @@ async def on_ready():
 			print("Gave role to " + str(member.display_name))
 
 print("Starting bot...")
-client.run('NTY1ODU1MDU1NTUxNTI4OTYw.XK9yGA.ftMNwNZMyWoFxIcFcT8vUWQzhl8')
+client.run(os.environ['DISCORD_TOKEN'])
