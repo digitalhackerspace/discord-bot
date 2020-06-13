@@ -67,6 +67,7 @@ async def on_member_join(member):
 			await member.add_roles(role, reason=AUTO_ROLE_REASON)
 			break
 
+	old_invites = invites.copy()
 	current_invites = await member.guild.invites()
 
 	if len(current_invites) > len(invites):
@@ -82,20 +83,41 @@ async def on_member_join(member):
 	current_invites.sort(key=lambda x: x.created_at)
 	invites.sort(key=lambda x: x.created_at)
 
+	embed = discord.Embed(title="New User")
+	embed.add_field(name="User", value=member.display_name)
+	embed.add_field(name="User ID", value=str(member.id))
+
+	found_invite = False
 	for i in range(len(invites)):
 		if(current_invites[i].uses != invites[i].uses):
-			embed = discord.Embed(title="New User")
+			found_invite = True
 
-			embed.add_field(name="User", value=member.display_name)
-			embed.add_field(name="User ID", value=str(member.id))
 			embed.add_field(name="Invite Link", value=str(invites[i].id))
 			embed.add_field(name="Invite Link Uses", value=str(current_invites[i].uses))
 			embed.add_field(name="Inviter", value=invites[i].inviter.display_name)
 			embed.add_field(name="Inviter ID", value=str(invites[i].inviter.id))
-
-			await modlog_channel.send(embed=embed)
 			break
 
+	if not found_invite:
+		possible_invites = list(set(current_invites) - set(old_invites))
+		print(str(possible_invites))
+		for invite in possible_invites:
+			if invite.uses < 1:
+				possible_invites.pop(invite)
+
+		print("len_pi=" + str(len(possible_invites)))
+		if len(possible_invites) == 1:
+			embed.add_field(name="Invite Link", value=str(possible_invites[0].id))
+			embed.add_field(name="Invite Link Uses", value=str(possible_invites[0].uses))
+			embed.add_field(name="Inviter", value=possible_invites[0].inviter.display_name)
+			embed.add_field(name="Inviter ID", value=str(possible_invites[0].inviter.id))
+		else:
+			i = 0
+			for invite in possible_invites:
+				embed.add_field(name="Possible Invite Link " + str(i), value="ID: " + str(invite.id) + " Uses: " + str(invite.uses))
+				i += 1
+
+	await modlog_channel.send(embed=embed)
 	invites = current_invites
 
 @client.event
