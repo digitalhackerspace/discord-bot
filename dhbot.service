@@ -4,7 +4,8 @@ Description=DHBot
 [Service]
 User=dhbot
 Group=dhbot
-ExecStart=/usr/bin/python3 /var/dhbot/dhbot.py
+ExecStart=/usr/bin/python3 -u /var/dhbot/dhbot.py
+StandardOutput=journal+console
 Type=idle
 WorkingDirectory=/var/dhbot/
 Restart=on-failure
