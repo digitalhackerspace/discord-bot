@@ -46,7 +46,7 @@ async def on_ready():
 	global auto_role
 
 	print('logged in as {0.user}'.format(client))
-	
+
 	for guild in client.guilds:
 		if guild.id == GUILD_ID:
 			for channel in guild.text_channels:
@@ -130,7 +130,7 @@ async def on_message(message):
 
 	if len(matches) > 0:
 		embed = discord.Embed(title="Found unclean AliExpress URLs", color=discord.Color.from_rgb(255,0,0))
-		
+
 		i = 0
 		for match in matches:
 			embed.add_field(name="Url " + str(i), value="https://" + match["aliLink"])
@@ -150,7 +150,7 @@ async def on_raw_reaction_add(payload):
 		return
 
 	guild = client.get_guild(payload.guild_id)
-	
+
 	if payload.emoji.is_unicode_emoji():
 		if payload.emoji.name in ROLES_TO_ASSIGN:
 			role = get(guild.roles, id=ROLES_TO_ASSIGN[payload.emoji.name])
@@ -170,7 +170,7 @@ async def on_raw_reaction_remove(payload):
 		return
 
 	guild = client.get_guild(payload.guild_id)
-	
+
 	if payload.emoji.is_unicode_emoji():
 		if payload.emoji.name in ROLES_TO_ASSIGN:
 			role = get(guild.roles, id=ROLES_TO_ASSIGN[payload.emoji.name])
