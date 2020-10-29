@@ -36,12 +36,14 @@ ALIEXPRESS_LINK_REGEX = r" *(?P<protocol>https?:\/\/)?(?P<subdomains>\S*?\.?)(?P
 client = discord.Client()
 
 invites = []
+members = []
 modlog_channel = None
 auto_role = None
 
 @client.event
 async def on_ready():
 	global invites
+	global members
 	global modlog_channel
 	global auto_role
 
@@ -57,6 +59,7 @@ async def on_ready():
 					auto_role = role
 
 			invites = await guild.invites()
+			members = await guild.fetch_members(limit=None).flatten()
 
 @client.event
 async def on_member_join(member):
@@ -163,6 +166,8 @@ async def on_raw_reaction_add(payload):
 
 @client.event
 async def on_raw_reaction_remove(payload):
+	global members
+
 	if payload.message_id != ROLE_ASSIGN_MESSAGE_ID:
 		return
 
@@ -174,11 +179,15 @@ async def on_raw_reaction_remove(payload):
 	if payload.emoji.is_unicode_emoji():
 		if payload.emoji.name in ROLES_TO_ASSIGN:
 			role = get(guild.roles, id=ROLES_TO_ASSIGN[payload.emoji.name])
-			user = payload.member
+			user = get(members, id=payload.user_id)
+			if user is None:
+				members = await guild.fetch_members(limit=None).flatten()
+				user = get(members, id=payload.user_id)
+
 			if user is not None:
 				await user.remove_roles(role, reason=ROLE_ASSIGN_REASON)
 			else:
-				print("Error while assigning role by reaction; user is None")
+				print("Error while removing role by reaction; user is None")
 
 print("Starting bot...")
 client.run(os.environ['DISCORD_TOKEN'])
