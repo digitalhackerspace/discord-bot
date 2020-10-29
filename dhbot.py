@@ -154,7 +154,7 @@ async def on_raw_reaction_add(payload):
 	if payload.emoji.is_unicode_emoji():
 		if payload.emoji.name in ROLES_TO_ASSIGN:
 			role = get(guild.roles, id=ROLES_TO_ASSIGN[payload.emoji.name])
-			user = get(guild.members, id=payload.user_id)
+			user = payload.member
 			if user is not None:
 				await user.add_roles(role, reason=ROLE_ASSIGN_REASON)
 			else:
@@ -174,7 +174,7 @@ async def on_raw_reaction_remove(payload):
 	if payload.emoji.is_unicode_emoji():
 		if payload.emoji.name in ROLES_TO_ASSIGN:
 			role = get(guild.roles, id=ROLES_TO_ASSIGN[payload.emoji.name])
-			user = get(guild.members, id=payload.user_id)
+			user = payload.member
 			if user is not None:
 				await user.remove_roles(role, reason=ROLE_ASSIGN_REASON)
 			else:
