@@ -30,6 +30,9 @@ ROLES_TO_ASSIGN = {
 }
 ROLE_ASSIGN_REASON = 'User opted-in to role'
 
+PRIMARY_VOICE_CHANNEL_ID = 565788276859076629
+SECONDARY_VOICE_CHANNEL_ID = 854688163943153684
+
 ALIEXPRESS_LINK_REGEX = r" *(?P<protocol>https?:\/\/)?(?P<subdomains>\S*?\.?)(?P<aliLink>aliexpress\.com\/item\/\d*\.html)(?P<queryParameter>\?\S*)?\s*"
 
 client = discord.Client()
@@ -162,7 +165,6 @@ async def on_raw_reaction_add(payload):
 			else:
 				print("Error while assigning role by reaction; user is None")
 
-
 @client.event
 async def on_raw_reaction_remove(payload):
 	global members
@@ -187,6 +189,19 @@ async def on_raw_reaction_remove(payload):
 				await user.remove_roles(role, reason=ROLE_ASSIGN_REASON)
 			else:
 				print("Error while removing role by reaction; user is None")
+
+@client.event
+async def on_voice_state_update(member, before, after):
+	primary_voice_channel = get(member.guild.voice_channels, id=PRIMARY_VOICE_CHANNEL_ID)
+	secondary_voice_channel = get(member.guild.voice_channels, id=SECONDARY_VOICE_CHANNEL_ID)
+	is_secondary_voice_channel_public = secondary_voice_channel.overwrites_for(auto_role).connect is True
+
+	if after.channel is None:
+		if is_secondary_voice_channel_public and len(secondary_voice_channel.members) == 0 and len(primary_voice_channel.members) == 0:
+			await secondary_voice_channel.set_permissions(auto_role, connect=False, view_channel=False)
+	else:
+		if after.channel.id == PRIMARY_VOICE_CHANNEL_ID and not is_secondary_voice_channel_public:
+			await secondary_voice_channel.set_permissions(auto_role, connect=True, view_channel=True)
 
 print("Starting bot...")
 client.run(os.environ['DISCORD_TOKEN'])
