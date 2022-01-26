@@ -139,7 +139,7 @@ async def on_message(message):
 	if len(matches) > 0:
 		embed = discord.Embed(title="Found unclean AliExpress URLs", color=discord.Color.from_rgb(255,0,0))
 
-		i = 0
+		i = 1
 		for match in matches:
 			embed.add_field(name="Url " + str(i), value="https://" + match["aliLink"])
 			i += 1
