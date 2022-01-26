@@ -35,7 +35,10 @@ SECONDARY_VOICE_CHANNEL_ID = 854688163943153684
 
 ALIEXPRESS_LINK_REGEX = r" *(?P<protocol>https?:\/\/)?(?P<subdomains>\S*?\.?)(?P<aliLink>aliexpress\.com\/item\/\d*\.html)(?P<queryParameter>\?\S*)?\s*"
 
-client = discord.Client()
+intents = discord.Intents.default()
+intents.members = True
+
+client = discord.Client(intents=intents)
 
 invites = []
 members = []
