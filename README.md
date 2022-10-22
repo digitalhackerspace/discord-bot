@@ -6,4 +6,4 @@ Join us on Discord: [![discordbadge](https://img.shields.io/discord/565788276397
 * Automatically give role to new users
 * Reaction roles
 * Log invite-link usage into modlog channel
- 
+* Automatically remove the tracking and language settings parts of AliExpress and MyDealz/Preisjäger URLs 
