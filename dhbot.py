@@ -34,6 +34,7 @@ PRIMARY_VOICE_CHANNEL_ID = 565788276859076629
 SECONDARY_VOICE_CHANNEL_ID = 854688163943153684
 
 ALIEXPRESS_LINK_REGEX = r" *(?P<protocol>https?:\/\/)?(?P<subdomains>\S*?\.?)(?P<aliLink>aliexpress\.com\/item\/\d*\.html)(?P<queryParameter>\?\S*)?\s*"
+MYDEALZ_LINK_REGEX = r"(?:http|https)://(?:www\.)?(?:preisjaeger\.at|mydealz\.de)/(?:share-deal|share-deal-from-app)/\d+"
 
 intents = discord.Intents.default()
 intents.members = True
@@ -133,18 +134,31 @@ async def on_message(message):
 	if message.author == client.user:
 		return
 
-	matches = [m.groupdict() for m in re.finditer(ALIEXPRESS_LINK_REGEX, message.content)]
-	matches = [x for x in matches if (x['subdomains'] != "www." and x['subdomains'] != "") or x['queryParameter'] != None]
+	aliexpressMatches = [m.groupdict() for m in re.finditer(ALIEXPRESS_LINK_REGEX, message.content)]
+	aliexpressMatches = [x for x in aliexpressMatches if (x['subdomains'] != "www." and x['subdomains'] != "") or x['queryParameter'] != None]
 
-	if len(matches) > 0:
+	if len(aliexpressMatches) > 0:
 		embed = discord.Embed(title="Found unclean AliExpress URLs", color=discord.Color.from_rgb(255,0,0))
 
 		i = 1
-		for match in matches:
+		for match in aliexpressMatches:
 			embed.add_field(name="Url " + str(i), value="https://" + match["aliLink"])
 			i += 1
 
 		embed.set_footer(text="Removed the country specific & tracking part from the URL")
+		await message.channel.send(embed=embed)
+
+	mydealzMatches = re.findall(MYDEALZ_LINK_REGEX, message.content)
+
+	if len(mydealzMatches) > 0:
+		embed = discord.Embed(title="Found unclean MyDealz URLs", color=discord.Color.from_rgb(255,0,0))
+
+		i = 1
+		for match in mydealzMatches:
+			embed.add_field(name="Url " + str(i), value=str(match).replace('share-deal-from-app/', '').replace('share-deal/', ''))
+			i += 1
+
+		embed.set_footer(text="Removed the forceful app download gateway")
 		await message.channel.send(embed=embed)
 
 @client.event
